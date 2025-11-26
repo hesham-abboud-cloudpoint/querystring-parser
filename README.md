@@ -1,51 +1,128 @@
-# querystring-parser
+# sequelize-querystring-parser
 
-Transforms CRUD-related querystrings into structured data.
+This library builds on top of [`@bitovi/querystring-parser`](https://github.com/bitovi/querystring-parser/tree/main/packages/querystring-parser#readme) to transform CRUD-related querystrings into structured data for the [Sequelize ORM](https://sequelize.org).
 
-```js
-const querystringParser = require("@bitovi/querystring-parser");
-
-const { page } = querystringParser.parse("page[number]=0&page[size]=10");
-console.log(page.number); // --> 0
-console.log(page.size); // --> 10
-```
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Sort Parameters](#sort-parameters)
+  - [Pagination Parameters](#pagination-parameters)
+  - [Fields Parameters](#fields-parameters)
+  - [Include Parameters](#include-parameters)
+  - [Filter Parameters](#filter-parameters)
+- [Home](https://github.com/bitovi/querystring-parser#readme)
 
 ## Installation
-
-If you are using `querystring-parser` with [Objection](https://vincit.github.io/objection.js/):
-
-```sh
-npm install @bitovi/objection-querystring-parser
-```
-
-If you are using `querystring-parser` with [Sequelize](https://sequelize.org):
 
 ```sh
 npm install @bitovi/sequelize-querystring-parser
 ```
 
-Otherwise:
+If you do not plan to use this library with Sequelize, please install [`@bitovi/querystring-parser`](https://github.com/bitovi/querystring-parser/tree/main/packages/querystring-parser#readme).
 
-```sh
-npm install @bitovi/querystring-parser
+## Usage
+
+```js
+const querystringParser = require("@bitovi/sequelize-querystring-parser");
 ```
 
-## Next steps
+### Sort Parameters
 
-- Read the [full documentation](https://github.com/bitovi/querystring-parser/tree/main/packages/querystring-parser#readme)
-- Read the docs for ORM-specific versions
-  - [Objection](https://github.com/bitovi/querystring-parser/tree/main/packages/objection#readme)
-  - [Sequelize](https://github.com/bitovi/querystring-parser/tree/main/packages/sequelize#readme)
+Reference: [JSON:API - Sorting](https://jsonapi.org/format/#fetching-sorting)
 
-## Need help or have questions?
+```js
+const result = querystringParser.parse("sort=-date,name");
+console.log(result);
+// {
+//   orm: "sequelize",
+//   data: {
+//     order: [["date", "DESC"],["name","ASC"]]
+//  },
+//   errors: [],
+// };
+```
 
-This project is supported by [Bitovi, a Nodejs consultancy](https://www.bitovi.com/backend-consulting/nodejs-consulting). You can get help or ask questions on our:
+### Pagination Parameters
 
-- Bitovi community [Discord](https://discord.gg/J7ejFsZnJ4)
-- [Twitter](https://twitter.com/bitovi)
+Reference: [JSON:API - Pagination](https://jsonapi.org/format/#fetching-pagination)
 
-Or, you can hire us for training, consulting, or development. [Set up a free consultation.](https://www.bitovi.com/backend-consulting/nodejs-consulting)
+```js
+const result = querystringParser.parse("page[number]=0&page[size]=10");
+console.log(result);
+// {
+//   orm: "sequelize",
+//   data: {
+//     offset: 0,
+//     limit: 10
+//  },
+//   errors: []
+// };
+```
 
-## Development / Contributing
+### Fields Parameters
 
-See [CONTRIBUTING.md](CONTRIBUTING.md)
+Reference: [JSON:API - Inclusion of Related Resources](https://jsonapi.org/format/#fetching-sparse-fieldsets)
+
+```js
+const result = querystringParser.parse("fields[people]=id,name");
+console.log(result);
+// {
+//   orm: "sequelize",
+//   data: {
+//     attributes: ["id","name"]
+//  },
+//   errors: []
+// };
+```
+
+### Include Parameters
+
+Reference: [JSON:API - Inclusion of Related Resources](https://jsonapi.org/format/#fetching-includes)
+
+```js
+const result = querystringParser.parse("include=pets,dogs");
+console.log(result);
+// {
+//   orm: "sequelize",
+//   data: {
+//     include: ["pets","dogs"]
+//  },
+//   errors: []
+// };
+```
+
+### Filter Parameters
+
+```js
+const result = querystringParser.parse(
+  "filter=and(any('age','10','20'),equals('name','mike'))"
+);
+console.log(result);
+// {
+//   orm: "sequelize",
+//   data: {
+//     where: {
+//       [Symbol(and)] : {
+//         [Symbol(any)]: {
+//           age: [10, 20]
+//         },
+//         [Symbol(eq)]: {
+//           name: 'mike'
+//         }
+//       }
+//     }
+//  },
+//   errors: []
+// };
+```
+
+**Note**: Database Validations should be done before or after passing the query to the library before the database call is made.
+
+**Note**: The `Symbol()` calls use the [`Op` imported from the Sequelize library](https://sequelize.org/docs/v6/core-concepts/model-querying-basics/), not the [Javascript Symbol class](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol).
+
+## Example
+
+A more practical example on how to use this library in your project can be found [here](https://github.com/bitovi/querystring-parser/tree/main/examples)
+
+## Further Documentation
+
+This library builds on [`@bitovi/querystring-parser`](https://github.com/bitovi/querystring-parser/tree/main/packages/querystring-parser#readme). See its [documentation](https://github.com/bitovi/querystring-parser/tree/main/packages/querystring-parser#readme) for more on using `querystring-parser`.
