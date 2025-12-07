@@ -17,7 +17,7 @@
     "sequelize"
   ],
   "dependencies": {
-    "@bitovi/querystring-parser": "^0.6.4",
+    "@bitovi/querystring-parser": "github:hesham-abboud-cloudpoint/querystring-parser#build/querystring-parser",
     "sequelize": "^6.21.2"
   },
   "devDependencies": {
