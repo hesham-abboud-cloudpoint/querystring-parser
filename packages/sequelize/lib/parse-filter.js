@@ -10,8 +10,10 @@ const Operator = Object.freeze({
   NOT_EQUALS: "<>",
   GREATER_THAN: ">",
   GREATER_OR_EQUAL: ">=",
+  GREATER_THAN_OR_EQUAL: ">=",
   LESS_THAN: "<",
   LESS_OR_EQUAL: "<=",
+  LESS_THAN_OR_EQUAL: "<=",
   LIKE: "LIKE",
   IN: "IN",
   NOT_IN: "NOT IN",
@@ -32,8 +34,10 @@ const SequelizeSymbols = Object.freeze({
   [Operator.EQUALS]: Op.eq,
   [Operator.NOT_EQUALS]: Op.ne,
   [Operator.GREATER_THAN]: Op.gt,
+  [Operator.GREATER_OR_EQUAL]: Op.gte,
   [Operator.GREATER_THAN_OR_EQUAL]: Op.gte,
   [Operator.LESS_THAN]: Op.lt,
+  [Operator.LESS_OR_EQUAL]: Op.lte,
   [Operator.LESS_THAN_OR_EQUAL]: Op.lte,
 });
 
